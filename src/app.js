@@ -5,7 +5,7 @@ const app = express();
 require('./db/mongoose')
 
 app.use(express.json())
-app.use("/users",userRoute)
-app.use("/tasks",taskRoute)
+app.use("/users", userRoute)
+app.use("/tasks", taskRoute)
 
 app.listen(3000)

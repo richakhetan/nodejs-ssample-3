@@ -5,58 +5,61 @@ const jwt = require('jsonwebtoken')
 const Task = require('../models/task')
 
 const userSchema = new mongoose.Schema({
-    name:{
+    name: {
         type: String,
-        unique:false,
-        trim : true,
+        unique: false,
+        trim: true,
         minLength: 5,
         required: true
     },
-    email:{
+    email: {
         type: String,
-        unique :true,
+        unique: true,
         trim: true,
-        required:true,
-        validate(value){
-            if(!validator.isEmail(value)){
+        required: true,
+        validate(value) {
+            if (!validator.isEmail(value)) {
                 throw new Error('Invalid Email')
             }
         }
     },
-    password:{
+    password: {
         type: String,
         trim: true,
-        required:true,
+        required: true,
     },
-    age:{
+    age: {
         type: Number
     },
-    tokens:[{
-        token : {
-            type : String,
-            required : true
+    tokens: [{
+        token: {
+            type: String,
+            required: true
         }
-    }]
-},{
-    timestamps:true
+    }],
+    avatar: {
+        type: Buffer
+    }
+}, {
+    timestamps: true
 })
 
-userSchema.virtual('tasks',{
+userSchema.virtual('tasks', {
     ref: 'Task',
-    localField:'_id',
-    foreignField:'owner'
+    localField: '_id',
+    foreignField: 'owner'
 })
 
-userSchema.methods.getAuthToken = async function(){
+userSchema.methods.getAuthToken = async function () {
     const user = this
-    
-    const token = jwt.sign({_id: user._id.toString()}, 'JWTKEY')
-    user.tokens = user.tokens.concat({token})
+
+    const token = jwt.sign({ _id: user._id.toString() }, 'JWTKEY')
+    user.tokens = user.tokens.concat({ token })
     await user.save()
     return token
 }
 
-userSchema.methods.toJSON = function(){
+userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
     delete userObject.password
@@ -65,7 +68,7 @@ userSchema.methods.toJSON = function(){
 }
 
 userSchema.statics.getUserByCredential = async (email, password) => {
-    const user = await User.findOne({email})
+    const user = await User.findOne({ email })
     if (!user) {
         throw new Error('Unable to login')
     }
@@ -79,21 +82,21 @@ userSchema.statics.getUserByCredential = async (email, password) => {
     return user
 }
 
-userSchema.pre('save', async function(next){
+userSchema.pre('save', async function (next) {
     const user = this
-    if(user.isModified('password')){
-        user.password = await bcrypt.hash(user.password,8)
+    if (user.isModified('password')) {
+        user.password = await bcrypt.hash(user.password, 8)
     }
     next()
 })
 
 //Delete Tasks when deleting users
-userSchema.pre('remove', async function(next){
+userSchema.pre('remove', async function (next) {
     const user = this
-    await Task.deleteMany({owner:user._id})
+    await Task.deleteMany({ owner: user._id })
     next()
 })
 
-const User = mongoose.model('User',userSchema)
+const User = mongoose.model('User', userSchema)
 
 module.exports = User
