@@ -3,11 +3,13 @@ const User = require('../models/user')
 const router = new express.Router()
 const auth = require('../middleware/auth')
 const multer = require('multer')
+const email = require('../email/mailService')
 
 router.post("/", async (req, res) => {
     let user = new User(req.body)
     try {
         user = await user.save()
+        email.sendWelcomeMsg(user.email, user.name)
         const token = await user.getAuthToken()
         res.send({ user, token })
     } catch (er) {
