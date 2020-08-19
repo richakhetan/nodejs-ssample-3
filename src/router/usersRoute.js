@@ -23,7 +23,7 @@ router.post("/login", async (req, res) => {
     try {
         let user = await User.getUserByCredential(req.body.email, req.body.password)
         const token = await user.getAuthToken();
-        res.send({ user, token })
+        res.send({ user, token }).status(201)
     } catch (e) {
         res.status(400).send("Invalid Username/Password")
     }

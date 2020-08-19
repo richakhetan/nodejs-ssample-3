@@ -8,4 +8,4 @@ app.use(express.json())
 app.use("/users", userRoute)
 app.use("/tasks", taskRoute)
 
-app.listen(3000)
+module.exports = app

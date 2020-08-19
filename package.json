@@ -4,7 +4,11 @@
   "description": "",
   "main": "mongodb.js",
   "scripts": {
-    "dev": "env-cmd -f src/config/dev.env nodemon src/app.js"
+    "dev": "env-cmd -f ./config/dev.env nodemon src/index.js",
+    "test": "env-cmd -f ./config/test.env jest --watch"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "",
@@ -19,5 +23,9 @@
     "mongoose": "^5.9.26",
     "multer": "^1.4.2",
     "validator": "^13.1.1"
+  },
+  "devDependencies": {
+    "jest": "^26.4.0",
+    "supertest": "^4.0.2"
   }
 }
