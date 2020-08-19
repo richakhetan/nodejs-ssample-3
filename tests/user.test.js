@@ -21,10 +21,9 @@ test('user create should be successful', async () => {
     }).expect(200)
 })
 
-test('user login', async (done) => {
+test('user login', async () => {
     await request(app).post('/users').send({
         email: userOne.email,
         password: 'MyPass77!'
     }).expect(200)
-    done()
 })
